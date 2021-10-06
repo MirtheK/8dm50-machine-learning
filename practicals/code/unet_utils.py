@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+import tifffile as tif
 from sklearn.feature_extraction.image import extract_patches_2d
 import gryds
 import time
@@ -21,7 +22,7 @@ def load_data(impaths_all, test=False):
 
     # Load as numpy array and normalize between 0 and 1
     for im_path in impaths_all:
-        images.append(np.array(Image.open(im_path)) / 255.)
+        images.append(tif.imread(im_path) / 255.)
         mask_path = im_path.replace('images', 'mask').replace('.tif', '_mask.gif')
         masks.append(np.array(Image.open(mask_path)) / 255.)
         if not test:
@@ -32,7 +33,6 @@ def load_data(impaths_all, test=False):
 
     # Convert to numpy arrays with channels last and return
     return np.array(images), np.expand_dims(np.array(masks), axis=-1), np.expand_dims(np.array(segmentations), axis=-1)
-
 
 def pad_image(image, desired_shape):
     """
